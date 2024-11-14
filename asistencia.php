@@ -71,7 +71,7 @@
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 0.0.1
+      <b>Version</b> 0.0.1.1
     </div>
     <strong>Copyright &copy; 2024-2025 <a target="_blank" href="">Universidad Nacional Casimiro Sotelo Montenegro</a></strong> Todos los derechos reservados.
   </footer>
