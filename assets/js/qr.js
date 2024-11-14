@@ -11,9 +11,15 @@ const btnScanQR = document.getElementById("btn-scan-qr");
 // Lectura desactivada
 let scanning = false;
 
-const mostrarMensajeError = (mensaje) => {
-  // Función para mostrar mensajes de error de manera amigable
-  alert(mensaje); // Considera usar un modal en lugar de alert
+const mostrarMensajeError = (mensaje, error = null) => {
+  console.error(mensaje, error);
+  // Usar un sistema de notificaciones más moderno
+  // Por ejemplo, toastify o sweet alert
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: mensaje
+  });
 };
 
 // Función para encender la cámara
@@ -133,5 +139,12 @@ window.addEventListener('load', () => {
     alert("Tu navegador no soporta el acceso a la cámara. Por favor, actualiza tu navegador o usa uno diferente.");
   }
 });
+
+// Recomiendo usar un objeto para manejar el estado
+const scannerState = {
+    isScanning: false,
+    selectedCamera: null,
+    stream: null
+};
 
 
