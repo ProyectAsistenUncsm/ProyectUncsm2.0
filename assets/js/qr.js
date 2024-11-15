@@ -118,12 +118,26 @@ const activarSonido = () => {
   }
 }
 
-// Callback cuando termina de leer el código QR
+// Función para extraer los últimos 9 caracteres
+const obtenerUltimos9Caracteres = (texto) => {
+  return texto.slice(-9);
+};
+
+// Modificamos el callback del QR
 qrcode.callback = (respuesta) => {
   if (respuesta) {
-    show(respuesta); // Muestra la respuesta en pantalla (puedes mostrarla en un modal o alert)
-    activarSonido(); // Activa el sonido
-    cerrarCamara(); // Cierra la cámara
+    const ultimos9 = obtenerUltimos9Caracteres(respuesta);
+    
+    // Mostrar notificación con los últimos 9 caracteres
+    Swal.fire({
+      title: 'Código QR escaneado',
+      text: `Últimos 9 caracteres: ${ultimos9}`,
+      icon: 'success'
+    });
+    
+    show(respuesta); // Mantiene la función original por si la necesitas
+    activarSonido();
+    cerrarCamara();
   }
 };
 
