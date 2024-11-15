@@ -48,6 +48,7 @@ require 'header.php';
                                     <th>Teléfono</th>
                                     <th>Status</th>
                                     <th>Carrera</th>
+                                    <th>Area de conocimiento</th>
                                     <th>Imagen</th>
                                 </tr>
                             </thead>
@@ -66,6 +67,7 @@ require 'header.php';
                                     <th>Teléfono</th>
                                     <th>Status</th>
                                     <th>Carrera</th>
+                                    <th>Area de conocimiento</th>
                                     <th>Imagen</th>
                                 </tr>
                             </tfoot>   
@@ -115,6 +117,11 @@ require 'header.php';
                             <div class="form-group col-lg-4 col-md-4 col-xs-12">
                                 <label for="carrera">Carrera(*): </label>
                                 <input class="form-control" type="text" name="carrera" id="carrera" maxlength="64" placeholder="Carrera" required>
+                            </div>
+                            
+                            <div class="form-group col-lg-4 col-md-4 col-xs-12">
+                                <label for="area_de_conocimiento">Area de Conocimiento(*): </label>
+                                <input class="form-control" type="text" name="area_de_conocimiento" id="carrera" maxlength="64" placeholder="Carrera" required>
                             </div>
 
                             <div class="form-group col-lg-4 col-md-4 col-xs-12">

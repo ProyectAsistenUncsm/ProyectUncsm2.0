@@ -60,8 +60,8 @@
                   <img src="/files/alumnos/<?php echo $_SESSION['imagen']; ?>" class="img-circle" alt="User Image">
 
                   <p>
-                    CompartiendoCódigos - Desarrollo web
-                    <small>2021-2022</small>
+                    UNIVERSIDAD CASEMIRO SOTELO MONTENEGRO
+                    <small>2024</small>
                   </p>
                 </li>
                 <!-- Menu Footer-->

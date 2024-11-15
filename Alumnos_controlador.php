@@ -26,6 +26,7 @@ $password = isset($_POST['password']) ? limpiarCadena($_POST['password']) : "";
 $codigo = isset($_POST['codigo']) ? limpiarCadena($_POST['codigo']) : "";
 $telefono = isset($_POST['telefono']) ? limpiarCadena($_POST['telefono']) : "";
 $carrera = isset($_POST['carrera']) ? limpiarCadena($_POST['carrera']) : "";
+$area_de_conocimiento = isset($_POST['area_de_conocimiento']) ? limpiarCadena($_POST['area_de_conocimiento']) : "";
 $imagen = isset($_POST["imagen"]) ? limpiarCadena($_POST["imagen"]) : "";
 
 $op = isset($_GET['op']) ? limpiarCadena($_GET['op']) : '';
@@ -65,12 +66,12 @@ if (isset($_FILES['imagen']) && file_exists($_FILES['imagen']['tmp_name']) && is
         // Verificamos si se está insertando un nuevo alumno o editando uno existente
         if (empty($alumno_id)) {
             // Si es un nuevo alumno, llamamos al método insertar de la clase alumno
-            $rspsta = $alumno->insertar($nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $imagen);
+            $rspsta = $alumno->insertar($nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $area_de_conocimiento, $imagen);
             // Devolvemos un mensaje según el resultado de la operación
             echo $rspsta ? "Datos registrados correctamente" : "No se pudo registrar todos los datos del alumno";
         } else {
             // Si es un alumno existente, llamamos al método editar de la clase alumno
-            $rspsta = $alumno->editar($alumno_id, $nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $imagen);
+            $rspsta = $alumno->editar($alumno_id, $nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $area_de_conocimiento, $imagen);
             // Devolvemos un mensaje según el resultado de la operación
             echo $rspsta ? "Datos actualizados correctamente" : "No se pudo actualizar los datos";
         }
@@ -125,7 +126,8 @@ if (isset($_FILES['imagen']) && file_exists($_FILES['imagen']['tmp_name']) && is
             "7" => htmlspecialchars($reg->telefono),
             "8" => ($reg->status) ? '<span class="label bg-green">Activado</span>' : '<span class="label bg-red">Desactivado</span>',
             "9" => htmlspecialchars($reg->carrera),
-            "10" => '<img src="files/alumnos/' . htmlspecialchars($reg->imagen) . '" height="50" width="50" alt="Imagen de alumno">'
+            "10" => htmlspecialchars($reg->area_de_conocimiento),
+            "11" => '<img src="files/alumnos/' . htmlspecialchars($reg->imagen) . '" height="50" width="50" alt="Imagen de alumno">'
             );
         }
         

@@ -6,9 +6,9 @@ class Alumnos
 {
     public function __construct() {}
 
-    public function insertar($nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $imagen) {
-    $sql = "INSERT INTO alumnos (nombre, apellidos, login, email, password, codigo, telefono, carrera, imagen, status)
-            VALUES ('$nombre', '$apellidos', '$login', '$email', '$password', '$codigo', '$telefono', '$carrera', '$imagen', '1')";
+    public function insertar($nombre, $apellidos, $login, $email, $password, $codigo, $telefono, $carrera, $area_de_conocimiento, $imagen) {
+    $sql = "INSERT INTO alumnos (nombre, apellidos, login, email, password, codigo, telefono, carrera, area_de_conocimiento, imagen, status)
+            VALUES ('$nombre', '$apellidos', '$login', '$email', '$password', '$codigo', '$telefono', '$carrera', '$area_de_conocimiento','$imagen', '1')";
     return ejecutarConsulta($sql);
 }
 
@@ -18,12 +18,12 @@ class Alumnos
         if (!empty($password)) {
             $sql = "UPDATE alumnos 
                     SET nombre='$nombre', apellidos='$apellidos', login='$login', email='$email', 
-                    password='$password', codigo='$codigo', telefono='$telefono', carrera='$carrera', imagen='$imagen'
+                    password='$password', codigo='$codigo', telefono='$telefono', carrera='$carrera', area_de_conocimiento='$area_de_conocimiento', imagen='$imagen'
                     WHERE alumno_id='$alumno_id'";
         } else {
             $sql = "UPDATE alumnos 
                     SET nombre='$nombre', apellidos='$apellidos', login='$login', email='$email', 
-                    codigo='$codigo', telefono='$telefono', carrera='$carrera', imagen='$imagen'
+                    codigo='$codigo', telefono='$telefono', carrera='$carrera', area_de_conocimiento='$area_de_conocimiento', imagen='$imagen'
                     WHERE alumno_id='$alumno_id'";
         }
         return ejecutarConsulta($sql);
