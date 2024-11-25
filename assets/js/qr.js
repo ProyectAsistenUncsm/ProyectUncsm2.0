@@ -23,7 +23,13 @@ const mostrarMensajeError = (mensaje, error = null) => {
 };
 
 // Función para encender la cámara
-const encenderCamara = (tipoDeCamara = "environment") => {
+const encenderCamara = async (tipoDeCamara = "environment") => {
+  const permisoConcedido = await solicitarPermisoCamara();
+  
+  if (!permisoConcedido) {
+    return;
+  }
+
   // Verificamos si el navegador soporta acceso a la cámara
   if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
     navigator.mediaDevices.enumerateDevices()
@@ -141,16 +147,40 @@ qrcode.callback = (respuesta) => {
   }
 };
 
+// Función para solicitar permiso de cámara
+const solicitarPermisoCamara = async () => {
+  try {
+    const result = await Swal.fire({
+      title: '¿Permitir acceso a la cámara?',
+      text: 'Necesitamos acceder a tu cámara para escanear códigos QR',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Permitir',
+      cancelButtonText: 'Denegar'
+    });
+
+    if (result.isConfirmed) {
+      return true;
+    } else {
+      Swal.fire({
+        title: 'Acceso denegado',
+        text: 'No podrás escanear códigos QR sin acceso a la cámara',
+        icon: 'info'
+      });
+      return false;
+    }
+  } catch (error) {
+    mostrarMensajeError("Error al solicitar permiso de cámara", error);
+    return false;
+  }
+};
+
 // Evento para mostrar la cámara al cargar la página
 window.addEventListener('load', () => {
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // Acceso a la cámara permitido
-    encenderCamara("environment"); // Para la cámara trasera (predeterminado)
-    // Si deseas usar la cámara frontal, puedes cambiar el parámetro a "user":
-    // encenderCamara("user"); 
+    encenderCamara("environment");
   } else {
-    // Manejo de error para navegadores que no soportan getUserMedia
-    alert("Tu navegador no soporta el acceso a la cámara. Por favor, actualiza tu navegador o usa uno diferente.");
+    mostrarMensajeError("Tu navegador no soporta el acceso a la cámara. Por favor, actualiza tu navegador o usa uno diferente.");
   }
 });
 
