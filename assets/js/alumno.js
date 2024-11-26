@@ -159,3 +159,5 @@ function activar(alumno_id) {
 }
 
 init(); // Aseguramos que la función init se ejecute al cargar el script
+
+
