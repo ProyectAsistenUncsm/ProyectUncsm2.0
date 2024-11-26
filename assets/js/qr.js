@@ -30,61 +30,70 @@ const encenderCamara = async (tipoDeCamara = "environment") => {
     return;
   }
 
-  // Verificamos si el navegador soporta acceso a la cámara
   if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    navigator.mediaDevices.enumerateDevices()
-      .then(devices => {
-        // Filtramos los dispositivos de video
-        const videoDevices = devices.filter(device => device.kind === "videoinput");
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === "videoinput");
 
-        // Si no se encuentran cámaras, mostramos un mensaje
-        if (videoDevices.length === 0) {
-          mostrarMensajeError("No se encontraron cámaras disponibles.");
-          return;
-        }
+      if (videoDevices.length === 0) {
+        mostrarMensajeError("No se encontraron cámaras disponibles.");
+        return;
+      }
 
-        // Buscamos la cámara deseada: puede ser 'user' para frontal o 'environment' para trasera
-        const selectedDevice = videoDevices.find(device => device.facingMode === tipoDeCamara) || videoDevices[0]; // Si no se encuentra, usamos la primera cámara
+      // Usamos las etiquetas para encontrar la cámara correcta
+      const selectedDevice = videoDevices.find(device =>
+        tipoDeCamara === "environment" ? device.label.toLowerCase().includes("back") : device.label.toLowerCase().includes("front")
+      ) || videoDevices[0]; // Si no se encuentra, usamos la primera cámara disponible.
 
-        // Llamamos a la función para acceder a la cámara seleccionada
-        iniciarStream(selectedDevice.deviceId);
-      })
-      .catch(error => {
-        console.error("Error enumerando los dispositivos", error);
-        mostrarMensajeError("Hubo un error al intentar obtener los dispositivos de la cámara.");
-      });
+      // Iniciamos el stream con el dispositivo seleccionado
+      iniciarStream(selectedDevice.deviceId);
+    } catch (error) {
+      mostrarMensajeError("Error al intentar acceder a los dispositivos de cámara.", error);
+    }
   } else {
-    console.error("El navegador no soporta el acceso a la cámara.");
-    alert("Tu navegador no soporta el acceso a la cámara.");
+    mostrarMensajeError("El navegador no soporta acceso a la cámara.");
   }
 };
 
+// Recomiendo usar un objeto para manejar el estado
+const scannerState = {
+  isScanning: false,
+  selectedCamera: null,
+  stream: null
+};
 // Iniciar el stream de la cámara
-const iniciarStream = (deviceId) => {
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({
-      video: { deviceId: { exact: deviceId } } // Usamos el deviceId seleccionado
-    })
-      .then(function (stream) {
-        scanning = true;
-        btnScanQR.hidden = true;
-        canvasElement.hidden = false;
-        video.setAttribute("playsinline", true); // Requerido para iOS Safari
-        video.srcObject = stream;
-        video.play();
-        tick();
-        scan();
-      })
-      .catch(function (error) {
-        console.error("Error accediendo al dispositivo de medios.", error);
-        alert("No se pudo acceder a la cámara seleccionada. Asegúrate de que has permitido el acceso.");
-      });
-  } else {
-    console.error("getUserMedia no es compatible con este navegador.");
-    alert("Tu navegador no soporta el acceso a la cámara.");
+const iniciarStream = async (deviceId) => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId } }
+    });
+
+    scannerState.stream = stream; // Guardamos el stream en el estado
+    scannerState.isScanning = true;
+
+    btnScanQR.hidden = true;
+    canvasElement.hidden = false;
+    video.setAttribute("playsinline", true); // Requerido para iOS Safari
+    video.srcObject = stream;
+    video.play();
+
+    tick();
+    scan();
+  } catch (error) {
+    mostrarMensajeError("Error al iniciar el stream de la cámara.", error);
   }
 };
 
+// Apagar la cámara y detener el stream
+const cerrarCamara = () => {
+  if (scannerState.stream) {
+    scannerState.stream.getTracks().forEach(track => track.stop());
+    scannerState.stream = null; // Liberamos el stream
+  }
+  canvasElement.hidden = true;
+  btnScanQR.hidden = false;
+  scannerState.isScanning = false;
+};
 // Función para actualizar el canvas con la imagen del video
 function tick() {
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -100,21 +109,18 @@ function tick() {
 
 // Función para escanear el código QR
 function scan() {
+  if (!scanning) return;
+
   try {
     qrcode.decode(); // Intentamos decodificar el código QR
-  } catch (e) {
-    setTimeout(scan, 300); // Intentamos de nuevo después de un breve retraso
+  } catch (error) {
+    // Mostramos un mensaje si ocurre un error específico
+    console.warn("No se pudo leer el QR, intentando nuevamente...", error);
+  } finally {
+    // Intentamos nuevamente después de un breve intervalo
+    setTimeout(scan, 300);
   }
 }
-
-// Apagar la cámara y detener el stream
-const cerrarCamara = () => {
-  video.srcObject.getTracks().forEach((track) => {
-    track.stop(); // Detenemos cada track del stream de la cámara
-  });
-  canvasElement.hidden = true; // Ocultamos el canvas
-  btnScanQR.hidden = false; // Mostramos el botón de escaneo nuevamente
-};
 
 // Activar sonido cuando se escanea el código QR
 const activarSonido = () => {
@@ -184,11 +190,7 @@ window.addEventListener('load', () => {
   }
 });
 
-// Recomiendo usar un objeto para manejar el estado
-const scannerState = {
-    isScanning: false,
-    selectedCamera: null,
-    stream: null
-};
+
+
 
 
